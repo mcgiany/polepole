@@ -1,0 +1,103 @@
+﻿@using NakkaResults.Utils;
+@using NakkaResults.ViewModels;
+@using NakkaResults.ViewModels.Home;
+@using System.Globalization;
+@model HomeRoundViewModel
+
+@{
+    var subtitle = Model.Complete ? "Celkové poradie po kole" : "Poradie v kole";
+}
+
+<h2>@Model.Round.Title</h2>
+<h3>@subtitle</h3>
+<h3>@DateUtils.DateTimeFromUnixTime(Model.Round.TournamentDate).ToString("dd.MM.yyyy")</h3>
+
+<a class="btn btn-danger" href="/League/@Model.LeagueId/Rounds">Späť na zoznam kôl</a>
+
+@if(!Model.Complete)
+{
+    <a class="btn btn-info" href="/Round/@Model.Round.TournamentId/Complete">Zobraziť celkové poradie</a>
+}
+else
+{
+    <a class="btn btn-info" href="/Round/@Model.Round.TournamentId">Zobraziť poradie v kole</a>
+}
+
+@{
+    int i = 1;
+}
+
+<table id="results" class="table table-bordered table-hover" style="width: 100%;">
+    <thead>
+        <tr>
+            <th scope="col" colspan="3"></th>
+            <th class="text-center" scope="col" colspan="2">Zápasy</th>
+            <th class="text-center" scope="col" colspan="3">Legy</th>
+            <th class="text-center" scope="col" colspan="3">Ton+</th>
+            <th class="text-center" scope="col" colspan="3">Najlepší</th>
+            <th scope="col" colspan="4"></th>
+        </tr>
+        <tr>
+            <th scope="col">#</th>
+            <th class="col-md-3" scope="col">Hráč</th>
+            <th scope="col">B</th>
+            <th scope="col">V</th>
+            <th scope="col">P</th>
+            <th scope="col">V</th>
+            <th scope="col">P</th>
+            <th scope="col">+/-</th>
+            <th scope="col">180+</th>
+            <th scope="col">140+</th>
+            <th scope="col">100+</th>
+            <th scope="col">Checkout</th>
+            <th scope="col">Leg</th>
+            <th scope="col">Priemer</th>
+            <th scope="col">Priemer</th>
+            <th scope="col">Hodených šípok</th>
+            <th scope="col">Úspešnosť %</th>
+            <th scope="col">Účasť</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var stats in Model.RoundStats.OrderByDescending(x => x.Points).ThenByDescending(x => x.LegsWin - (x.Legs - x.LegsWin)).ThenByDescending(x => x.LegsWin))
+{
+            var @avg = stats.TotalDarts > 0 ?
+                    Math.Round((decimal)@stats.TotalScore / (decimal)@stats.TotalDarts * 3, 2) :
+                    0;
+            <tr>
+            <td scope="row">@(@i++)</td>
+            <td>@stats.PlayerName</td>
+            <td>@stats.Points</td>
+            <td>@stats.SetsWin</td>
+            <td>@(@stats.Sets - @stats.SetsWin)</td>
+            <td>@stats.LegsWin</td>
+            <td>@(@stats.Legs - @stats.LegsWin)</td>
+            <td>@(@stats.LegsWin - (@stats.Legs - @stats.LegsWin))</td>
+            <td>@stats.Ton80Count</td>
+            <td>@stats.Ton40Count</td>
+            <td>@stats.Ton00Count</td>
+            <td>@stats.HighOut</td>
+            <td>@stats.BestLeg</td>
+            <td>@(Math.Round(stats.BestAvg, 2).ToString(CultureInfo.InvariantCulture))</td>
+                <td>@avg.ToString(CultureInfo.InvariantCulture)</td>
+            <td>@stats.TotalDarts</td>
+            <td>@(Math.Round(((decimal)stats.SetsWin / (decimal)stats.Sets) * 100, 2))%</td>
+            <td>@stats.Appearances</td>
+        </tr>
+}
+    </tbody>
+</table>
+
+@section Scripts
+{
+<script>
+    jQuery(document).ready(function () {
+        jQuery('#results').DataTable(
+        {
+            "paging": false,
+            "pageLength": 1000,
+            "fixedHeader": true,
+        });
+    });
+</script>
+}

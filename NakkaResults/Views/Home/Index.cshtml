@@ -1,0 +1,36 @@
+﻿@using Mcgiany.NakkaClient.Entities;
+@model List<NakkaLeague>
+
+<h1 class="text-center"><img src="~/logo.jpg" style="width:100px;" /> Darts Club PolePole Podunajské biskupice - výsledky</h1>
+
+<div class="text-center">
+    <img src="~/groupPhoto.jpg" />
+</div>
+
+<ul class="list-unstyled" style="margin-left: auto; margin-right: auto; width: 380px;">
+    <li>
+        <a class="text-decoration-none" href="https://www.facebook.com/PolepoleCoffeeWineBeer">
+            <img src="~/facebook.png" />
+        </a>
+        <span>PolePole Bar - Home venue</span>
+    </li>
+    <li>
+        <a class="text-decoration-none" href="https://www.facebook.com/groups/1027461738134636">
+            <img src="~/facebook.png" />
+        </a>
+        <span>Darts Club PolePole - Facebook group</span>
+    </li>
+</ul>
+
+<div class="container text-center">
+    @foreach (var league in Model.OrderByDescending(x => x.CreateTime))
+    {
+        <div class="card col-lg-5 mb-4 mt-2 d-inline-block h-100 align-top">
+            <div class="card-body">
+                <h5 class="card-title">@league.Title</h5>
+                <p class="card-text">@league.Details</p>
+                <a href="/League/@league.LeagueId/Rounds">Ligové kolá</a>
+            </div>
+        </div>
+    }
+</div>

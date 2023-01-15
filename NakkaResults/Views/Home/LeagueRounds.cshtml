@@ -1,0 +1,19 @@
+﻿@using NakkaResults.Utils;
+@using NakkaResults.ViewModels.Home;
+@model LeagueRoundsViewModel
+
+<h2>@Model.League.Title</h2>
+
+<table class="table">
+    <tr>
+        <th>Kolo</th>
+        <th>Dátum</th>
+    </tr>
+    @foreach (var round in Model.RoundList)
+    {
+        <tr>
+            <td><a href="/Round/@round.TournamentId">@round.Title</a></td>
+            <td>@DateUtils.DateTimeFromUnixTime(@round.TournamentDate).ToString("dd.MM.yyyy")</td>
+        </tr>
+    }
+</table>
